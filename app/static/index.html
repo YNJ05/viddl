@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VidDL — Video Downloader</title>
+  <link rel="icon" type="image/png" href="/assets/logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link
     href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap"
@@ -80,24 +81,11 @@
       gap: 16px;
     }
 
-    .logo-mark {
+    .logo-img {
       width: 44px;
       height: 44px;
-      background: var(--accent);
-      clip-path: polygon(0 0, 70% 0, 100% 30%, 100% 100%, 30% 100%, 0 70%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      object-fit: contain;
       flex-shrink: 0;
-      position: relative;
-    }
-
-    .logo-mark::after {
-      content: '▶';
-      font-size: 14px;
-      color: var(--bg);
-      font-weight: bold;
-      margin-left: 3px;
     }
 
     .logo-text {
@@ -791,7 +779,7 @@
 
   <div class="container">
     <header>
-      <div class="logo-mark"></div>
+      <img class="logo-img" src="/assets/logo.png" alt="VidDL Logo">
       <div class="logo-text">Vid<span>DL</span></div>
       <div class="version-tag">v1.0.0</div>
     </header>
