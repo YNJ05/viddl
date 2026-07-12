@@ -106,7 +106,6 @@ async def get_video_info(req: InfoRequest):
             formats = []
             seen = set()
             for f in (info.get("formats") or []):
-                label = None
                 fid = f.get("format_id", "")
                 ext = f.get("ext", "")
                 height = f.get("height")
