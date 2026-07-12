@@ -36,3 +36,5 @@ cookies/
 # Environment
 .env
 .env.local
+.vercel
+.env*
