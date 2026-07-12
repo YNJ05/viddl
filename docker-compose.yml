@@ -1,0 +1,24 @@
+services:
+  viddl:
+    build: .
+    # Or use the GHCR image once published:
+    # image: ghcr.io/<your-username>/viddl:latest
+    container_name: viddl
+    ports:
+      - "8000:8000"
+    volumes:
+      # Downloaded files persist to your local machine
+      - ./downloads:/downloads
+      # Optional: drop a Netscape-format cookies.txt here to unlock
+      # age-restricted / member-only / private videos.
+      # Export from your browser using the "Get cookies.txt LOCALLY" extension.
+      - ./cookies:/cookies:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DOWNLOADS_DIR=/downloads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/files"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
