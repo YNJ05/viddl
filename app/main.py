@@ -42,6 +42,7 @@ HAS_FFMPEG = shutil.which("ffmpeg") is not None
 # In-memory job tracker
 jobs: dict[str, dict] = {}
 
+
 # Shared yt-dlp base options — fixes YouTube 403 by using the Android
 # player client, which doesn't require PO tokens or browser cookies.
 def base_ydl_opts() -> dict:
@@ -89,7 +90,7 @@ class InfoRequest(BaseModel):
 
 
 def sanitize_filename(name: str) -> str:
-    return re.sub(r'[<>:"/\\|?*]', '_', name)
+    return re.sub(r'[<>:"/\\|?*]', "_", name)
 
 
 @app.get("/")
@@ -105,7 +106,7 @@ async def get_video_info(req: InfoRequest):
             info = ydl.extract_info(req.url, download=False)
             formats = []
             seen = set()
-            for f in (info.get("formats") or []):
+            for f in info.get("formats") or []:
                 fid = f.get("format_id", "")
                 ext = f.get("ext", "")
                 height = f.get("height")
@@ -116,27 +117,33 @@ async def get_video_info(req: InfoRequest):
                     key = f"{height}p"
                     if key not in seen:
                         seen.add(key)
-                        formats.append({
-                            "id": fid,
-                            "label": f"{height}p ({ext})",
-                            "height": height,
-                            "ext": ext,
-                            "type": "video",
-                        })
+                        formats.append(
+                            {
+                                "id": fid,
+                                "label": f"{height}p ({ext})",
+                                "height": height,
+                                "ext": ext,
+                                "type": "video",
+                            }
+                        )
                 elif vcodec == "none" and acodec != "none":
                     abr = f.get("abr", 0)
                     key = f"audio_{abr}"
                     if key not in seen:
                         seen.add(key)
-                        formats.append({
-                            "id": fid,
-                            "label": f"Audio {int(abr or 0)}kbps ({ext})",
-                            "abr": abr,
-                            "ext": ext,
-                            "type": "audio",
-                        })
+                        formats.append(
+                            {
+                                "id": fid,
+                                "label": f"Audio {int(abr or 0)}kbps ({ext})",
+                                "abr": abr,
+                                "ext": ext,
+                                "type": "audio",
+                            }
+                        )
 
-            formats.sort(key=lambda x: (x.get("height", 0) or x.get("abr", 0)), reverse=True)
+            formats.sort(
+                key=lambda x: x.get("height", 0) or x.get("abr", 0), reverse=True
+            )
 
             return {
                 "title": info.get("title", "Unknown"),
@@ -175,12 +182,14 @@ async def run_download(job_id: str, req: DownloadRequest):
             total = d.get("total_bytes") or d.get("total_bytes_estimate", 0)
             downloaded = d.get("downloaded_bytes", 0)
             pct = (downloaded / total * 100) if total else 0
-            jobs[job_id].update({
-                "progress": round(pct, 1),
-                "speed": d.get("_speed_str", "").strip(),
-                "eta": d.get("_eta_str", "").strip(),
-                "status": "downloading",
-            })
+            jobs[job_id].update(
+                {
+                    "progress": round(pct, 1),
+                    "speed": d.get("_speed_str", "").strip(),
+                    "eta": d.get("_eta_str", "").strip(),
+                    "status": "downloading",
+                }
+            )
         elif d["status"] == "finished":
             jobs[job_id]["status"] = "processing"
             jobs[job_id]["progress"] = 99
@@ -188,11 +197,13 @@ async def run_download(job_id: str, req: DownloadRequest):
     if req.audio_only:
         fmt = "bestaudio/best"
         if HAS_FFMPEG:
-            postprocessors = [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192",
-            }]
+            postprocessors = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192",
+                }
+            ]
         else:
             postprocessors = []
     else:
@@ -279,11 +290,13 @@ async def list_files():
     for f in DOWNLOADS_DIR.iterdir():
         if f.is_file() and not f.name.startswith("."):
             stat = f.stat()
-            files.append({
-                "name": f.name,
-                "size": stat.st_size,
-                "modified": stat.st_mtime,
-            })
+            files.append(
+                {
+                    "name": f.name,
+                    "size": stat.st_size,
+                    "modified": stat.st_mtime,
+                }
+            )
     files.sort(key=lambda x: x["modified"], reverse=True)
     return files
 
