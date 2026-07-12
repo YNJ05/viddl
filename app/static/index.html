@@ -1035,6 +1035,9 @@
             btn.textContent = '↓ Download Now';
             if (job.status === 'done') {
               showToast('Download complete! ✓', 'success');
+              if (job.filename) {
+                downloadFile(job.filename);
+              }
             }
           }
         } catch (e) { }
