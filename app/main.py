@@ -26,6 +26,15 @@ COOKIES_FILE = Path(
     os.environ.get("COOKIES_FILE", str(BASE_DIR / "cookies" / "cookies.txt"))
 )
 
+# Support setting cookies via a Vercel environment variable (YT_COOKIES)
+YT_COOKIES_ENV = os.environ.get("YT_COOKIES")
+if YT_COOKIES_ENV:
+    # Use /tmp since it's the only writable directory on Vercel
+    tmp_cookies = Path("/tmp/cookies.txt")
+    tmp_cookies.parent.mkdir(parents=True, exist_ok=True)
+    tmp_cookies.write_text(YT_COOKIES_ENV, encoding="utf-8")
+    COOKIES_FILE = tmp_cookies
+
 # ── App ──────────────────────────────────────────────────────────
 app = FastAPI(title="VidDL", version="1.0.0")
 
@@ -49,10 +58,10 @@ def base_ydl_opts() -> dict:
     opts: dict = {
         "quiet": True,
         "no_warnings": True,
-        # Use Android + web clients: avoids the bot-detection 403
+        # Use iOS + Android clients: avoids the bot-detection 403
         "extractor_args": {
             "youtube": {
-                "player_client": ["android", "web"],
+                "player_client": ["ios", "android"],
                 "player_skip": ["webpage", "configs"],
             }
         },
