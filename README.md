@@ -9,7 +9,7 @@ Built with **FastAPI** + **yt-dlp** — deployable on **Vercel**, **Docker**, or
 ### 🐳 Docker
 
 ```bash
-git clone https://github.com/<your-username>/viddl.git
+git clone https://github.com/YNJ05/viddl.git
 cd viddl
 docker compose up --build
 # → http://localhost:8000
